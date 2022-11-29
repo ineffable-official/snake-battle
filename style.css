@@ -88,3 +88,51 @@ body {
   font-family: "poppins", Arial, Helvetica, sans-serif;
   transform: translate(-50%, -50%);
 }
+
+.controls {
+  width: auto;
+  height: auto;
+  /* background: rgba(0, 0, 0, 0.05); */
+  position: fixed;
+  left: 32px;
+  bottom: 32px;
+  padding: 8px;
+  display: none;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  width: 50px;
+  height: 50px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+  font-size: 11px;
+}
+
+.btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+
+.btn.hidden {
+  background-color: transparent;
+}
+
+#open-controls {
+  padding: 4px 8px;
+  background: #000;
+  color: white;
+  border-radius: 8px;
+  position: fixed;
+  bottom: 8px;
+  left: 8px;
+  font-size: 0.7rem;
+}

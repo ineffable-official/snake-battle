@@ -25,9 +25,23 @@
       </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="assets/scripts/Game.js"></script>
-    <script src="assets/scripts/Snake.js"></script>
-    <script src="assets/scripts/scripts.js"></script>
+    <div class="controls" id="controls">
+      <div class="flex">
+        <div class="btn" id="up-btn">UP</div>
+      </div>
+      <div class="flex">
+        <div class="btn" id="left-btn">LEFT</div>
+        <div class="btn hidden"></div>
+        <div class="btn" id="right-btn">RIGHT</div>
+      </div>
+      <div class="flex">
+        <div class="btn" id="down-btn">DOWN</div>
+      </div>
+    </div>
+
+    <div id="open-controls">Control</div>
+
+    <script src="assets/scripts/jquery.js"></script>
+    <script src="assets/scripts/scripts.js" type="module"></script>
   </body>
 </html>

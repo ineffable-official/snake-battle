@@ -40,6 +40,24 @@ class Snake {
         this.y1_change = 0;
       }
     });
+
+    $("#up-btn").on("click", () => {
+      this.x1_change = 0;
+      this.y1_change = -blockSize;
+    });
+
+    $("#left-btn").on("click", () => {
+      this.x1_change = -blockSize;
+      this.y1_change = 0;
+    });
+    $("#down-btn").on("click", () => {
+      this.x1_change = 0;
+      this.y1_change = blockSize;
+    });
+    $("#right-btn").on("click", () => {
+      this.x1_change = blockSize;
+      this.y1_change = 0;
+    });
   }
 
   body(ctx, blockSize, baseColor) {
@@ -88,3 +106,5 @@ class Snake {
     }
   }
 }
+
+export default Snake;

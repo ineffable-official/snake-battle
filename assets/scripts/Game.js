@@ -1,7 +1,12 @@
+import Snake from "./Snake.js";
+import Player from "./Player.js";
+
 class Game {
-  constructor(roomId, playerId) {
+  constructor(roomId, player) {
+    this.baseUrl = "http://localhost:8000/api";
     this.roomId = roomId;
-    this.playerId = playerId;
+    this.player = player;
+    this.data = [];
   }
 
   update(ctx, width, height, baseColor) {
@@ -29,6 +34,14 @@ class Game {
   }
 
   gameover(ctx, x, y) {
+    fetch(
+      this.baseUrl +
+        "/game_match?room_id=" +
+        this.roomId +
+        "&player_id=" +
+        this.player.id,
+      { method: "DELETE" }
+    );
     ctx.fillStyle = "black";
     ctx.font = "52px arial";
     var text = "Game Over!";
@@ -47,19 +60,22 @@ class Game {
     ctx.canvas.width = width;
     ctx.canvas.height = height;
 
-    var player = new Snake(
-      "Faizun Musthofa",
-      Math.floor(width / 2 / blockSize) * blockSize,
-      Math.floor(height / 2 / blockSize) * blockSize,
-      [],
-      5
-    );
+    var player;
 
-    var foodX1 = Math.floor((Math.random() * width) / blockSize) * blockSize;
-    var foodY1 = Math.floor((Math.random() * height) / blockSize) * blockSize;
-    var foodSize = Math.floor(
-      Math.random() * (2 * blockSize - blockSize) + blockSize
-    );
+    var foodList;
+
+    this.data.forEach((d) => {
+      if (d.player_id === this.player.id) {
+        player = new Snake(
+          this.player.name,
+          JSON.parse(d.pos)[0],
+          JSON.parse(d.pos)[1],
+          [],
+          d.length
+        );
+        foodList = JSON.parse(d.food_list);
+      }
+    });
 
     setInterval(() => {
       if (!player.dead) {
@@ -67,8 +83,25 @@ class Game {
 
         this.grid(ctx, width, height, "rgb(0,0,0)", blockSize);
 
-        ctx.fillStyle = "green";
-        ctx.fillRect(foodX1, foodY1, foodSize, foodSize);
+        foodList.forEach((food) => {
+          ctx.fillStyle = "green";
+          ctx.fillRect(food[0], food[1], blockSize, blockSize);
+        });
+
+        this.data.forEach((d) => {
+          var oponent = new Snake(
+            "Oponent",
+            JSON.parse(d.pos)[0],
+            JSON.parse(d.pos)[1],
+            [],
+            d.length
+          );
+
+          oponent.render(ctx, blockSize, "red");
+          oponent.body(ctx, blockSize, "red");
+          oponent.move();
+          oponent.void(width, height);
+        });
 
         player.render(ctx, blockSize, "blue");
         player.body(ctx, blockSize, "blue");
@@ -81,22 +114,41 @@ class Game {
 
         player.ui(ctx, width, height, true);
 
-        for (let fx = 0; fx < foodSize; fx++) {
-          if (fx + foodX1 === player.x1 && fx + foodY1 === player.y1) {
-            foodX1 =
+        foodList.forEach((food) => {
+          if (food[0] === player.x1 && food[1] === player.y1) {
+            const fX1 =
               Math.floor((Math.random() * width) / blockSize) * blockSize;
-            foodY1 =
+            const fY1 =
               Math.floor((Math.random() * height) / blockSize) * blockSize;
-            foodSize = Math.floor(
-              Math.random() * (2 * blockSize - blockSize) + blockSize
-            );
+
+            const findex = foodList.indexOf(food);
+
+            foodList[findex] = [fX1, fY1];
 
             player.snakeLength += 1;
           }
-        }
+        });
+
+        var updateData = {
+          room_id: this.roomId,
+          player_id: this.player.id,
+          pos: JSON.stringify([player.x1, player.y1]),
+          length: player.length,
+          food_list: JSON.stringify(foodList),
+        };
+
+        fetch(this.baseUrl + "/game_match", {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        });
       } else {
         this.gameover(ctx, width / 2, height / 2);
       }
     }, 150);
   }
 }
+
+export default Game;
